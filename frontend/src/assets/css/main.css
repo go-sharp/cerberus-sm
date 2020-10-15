@@ -8,6 +8,10 @@
   padding: 4rem;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   height: 100%;
   background-color: #131313;
@@ -18,7 +22,6 @@ html {
 body {
   margin: 0;
   height: 100%;
-  box-sizing: border-box;
 }
 
 .logo {
