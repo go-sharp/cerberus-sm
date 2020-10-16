@@ -1,5 +1,7 @@
 <template>
-  <p>Add Service</p>
+  <page title="Add Service">
+
+  </page>
 </template>
 
 <script>

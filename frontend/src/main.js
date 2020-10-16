@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+import Page from "./components/Page.vue";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
@@ -14,6 +15,9 @@ import Buefy from 'buefy';
 import '@mdi/font/css/materialdesignicons.min.css';
 
 Vue.use(Buefy);
+
+// Register global components
+Vue.component("page", Page);
 
 Wails.Init(() => {
 	new Vue({

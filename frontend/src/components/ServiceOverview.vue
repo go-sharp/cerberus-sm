@@ -1,18 +1,32 @@
 <template>
-  <div class>
-    <h1 class="title is-4">Service Overview</h1>
-    <div class="columns">
-      <div class="column">First column</div>
-      <div class="column">Second column</div>
-      <div class="column">Third column</div>
-      <div class="column">Fourth column</div>
-    </div>
-  </div>
+  <page title="Service Overview">
+    <button @click="isLoading(true)">Call Loading</button>
+    <button @click="refreshServices">Refresh services</button>
+  </page>
 </template>
 
 <script>
-export default {};
+import { isLoading } from "../util";
+import * as Wails from '@wailsapp/runtime';
+ 
+
+export default {
+  methods: {
+    isLoading,
+    refreshServices: function() {
+      window.backend.Services.ReloadServices().catch(reason => console.log("-->", reason));
+      console.log("=>", this.svcStore);
+    }
+  },
+  // Lifecycle hooks
+  created: function() {
+    this.svcStore = Wails.Store.New("Services");
+    console.warn(this.svcStore.subscribe((state) => {
+        console.log(">>>", state);
+    }));
+  }
+};
 </script>
 
-<style>
+<style lang="scss" scoped>
 </style>

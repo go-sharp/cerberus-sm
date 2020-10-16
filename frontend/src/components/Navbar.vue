@@ -40,7 +40,4 @@ export default {
   border-radius: 0 0 5px 5px;
 }
 
-h1 {
-  color: #387891;
-}
 </style>

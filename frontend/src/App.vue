@@ -2,7 +2,7 @@
   <div id="app">
     <navbar id="navbar"></navbar>
     <main>
-      <router-view></router-view>
+      <router-view></router-view> 
     </main>
     <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
   </div>
@@ -11,44 +11,31 @@
 <script>
 import "./assets/css/main.css";
 import Navbar from "./components/Navbar.vue";
+import { LOADING } from "./util";
 
 export default {
   name: "app",
   components: {
-    "navbar": Navbar
+    navbar: Navbar,
   },
   data() {
     return {
       isLoading: false,
     };
   },
+  // Lifecylce hooks
+  created: function () {
+    window.wails.Events.On(
+      LOADING,
+      (isLoading) => (this.isLoading = !!isLoading)
+    );
+  },
 };
 </script>
 
 <style lang="scss">
-// Import Bulma's core
-@import "~bulma/sass/utilities/_all";
-
-// Set your colors
-$primary: #387891;
-
-// Setup $colors to use as bulma classes (e.g. 'is-twitter')
-$colors: (
-    "white": ($white, $black),
-    "black": ($black, $white),
-    "light": ($light, $light-invert),
-    "dark": ($dark, $dark-invert),
-    "primary": ($primary, $primary-invert),
-    "info": ($info, $info-invert),
-    "success": ($success, $success-invert),
-    "warning": ($warning, $warning-invert),
-    "danger": ($danger, $danger-invert),
-);
-
-// Links
-$link: $primary;
-$link-invert: $primary-invert;
-$link-focus-border: $primary;
+// Import custom colors and styles
+@import "styles";
 
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
@@ -64,5 +51,4 @@ main {
 #navbar {
   margin-bottom: 2rem;
 }
-
 </style>
