@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <navbar id="navbar"></navbar>
-    <main>
+    <div class="main">
       <router-view></router-view> 
-    </main>
+    </div>
     <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
   </div>
 </template>
@@ -40,12 +40,12 @@ export default {
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
 
-main {
-  height: 90%;
+.main {
+  height: 100%;
   background-color: white;
   border-radius: 5px;
   box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.6);
-  overflow-x: scroll;
+  overflow: hidden;
 }
 
 #navbar {

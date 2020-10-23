@@ -26,11 +26,6 @@ module.exports = {
       .options({
         limit: limit
       });
-    // config.module
-    //   .rule("scss")
-    //   .test(/\.scss$/i)
-    //   .use("sass-loader")
-    //   .loader("sass-loader");
   },
   css: cssConfig,
   configureWebpack: {
