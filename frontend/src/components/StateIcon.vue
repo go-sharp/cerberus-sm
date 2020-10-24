@@ -1,5 +1,5 @@
 <template>
-  <b-tooltip :label="currentState.tooltip" position="is-left" style="cursor: help" :active="currentState.tooltip !== ''" delay="1000">
+  <b-tooltip :label="currentState.tooltip" position="is-left" style="cursor: help" :active="currentState.tooltip !== ''" :delay="1000">
     <b-icon :icon="currentState.icon"></b-icon>
   </b-tooltip>
 </template>

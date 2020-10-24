@@ -8,10 +8,8 @@
         <slot name="menu"></slot>
       </div>
     </div>
-    <div class="columns content">
-      <div class="column">
+    <div class="content">
         <slot></slot>
-    </div>
     </div>
   </div>
 </template>
@@ -36,12 +34,15 @@ export default {
 }
 
 .page {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   padding: 0.75rem;
 }
 
 .content {
-  max-height: 90%;
+  height: 90%;
+  min-height: 50%;
   overflow-y: auto;
   overflow-x: hidden;
 }

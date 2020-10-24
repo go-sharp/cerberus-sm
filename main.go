@@ -25,6 +25,7 @@ func main() {
 		Colour:    "#131313",
 		Resizable: true,
 	})
+
 	app.Bind(basic)
 	app.Bind(svcs)
 	app.Run()

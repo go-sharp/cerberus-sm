@@ -2,7 +2,7 @@
   <div id="app">
     <navbar id="navbar"></navbar>
     <div class="main">
-      <router-view></router-view> 
+      <router-view></router-view>
     </div>
     <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
   </div>
@@ -10,8 +10,8 @@
 
 <script>
 import "./assets/css/main.css";
-import Navbar from "./components/Navbar.vue";
-import { LOADING } from "./util";
+import Navbar from './components/Navbar.vue';
+import { LOADING_EVENT } from "./util";
 
 export default {
   name: "app",
@@ -26,7 +26,7 @@ export default {
   // Lifecylce hooks
   created: function () {
     window.wails.Events.On(
-      LOADING,
+      LOADING_EVENT,
       (isLoading) => (this.isLoading = !!isLoading)
     );
   },
@@ -50,5 +50,9 @@ export default {
 
 #navbar {
   margin-bottom: 2rem;
+}
+
+.help {
+ color: $primary; 
 }
 </style>

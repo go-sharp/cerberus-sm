@@ -75,6 +75,19 @@ func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error
 	return svcs, nil
 }
 
+// ShowFileDialog displays a file dialog to request a file path.
+func (s *Services) ShowFileDialog(data map[string]interface{}) string {
+	dir := false
+	if d, ok := data["dir"]; ok {
+		dir = d.(bool)
+	}
+
+	if dir {
+		return s.r.Dialog.SelectDirectory()
+	}
+	return s.r.Dialog.SelectFile()
+}
+
 func (s *Services) getServices() (svcs []serviceInfo, err error) {
 	if !s.IsAdmin {
 		return svcs, fmt.Errorf("access denied: you need to be an administrator")

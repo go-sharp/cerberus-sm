@@ -6,7 +6,7 @@
           label="Reloads all configured services."
           position="is-left"
           size="is-small"
-          delay="1000"
+          :delay="1000"
         >
           <b-button
             @click="refreshServices"
@@ -138,11 +138,9 @@
 </template>
 
 <script>
-import { isLoading } from "../util";
+import { isLoading, createMsg } from "../util";
 import StateIcon from "./StateIcon.vue";
 import StartTypeIcon from "./StartTypeIcon.vue";
-
-const messageDuration = 5000;
 
 export default {
   components: {
@@ -163,53 +161,29 @@ export default {
           this.services = svc;
         })
         .catch((reason) =>
-          this.$buefy.toast.open({
-            duration: messageDuration,
-            message: `<b>Error</b>: ${reason}`,
-            type: "is-danger",
-          })
+          this.$buefy.toast.open(createMsg(reason,'error'))
         )
         .finally(() => isLoading(false));
     },
     startService: function (svc) {
       console.log(svc);
-      this.$buefy.toast.open({
-        duration: messageDuration,
-        message: `<b>Error</b>: Not implemented yet!`,
-        type: "is-danger",
-      });
+      this.$buefy.toast.open(createMsg('Not implemented yet!','error'));
     },
     stopService: function (svc) {
       console.log(svc);
-      this.$buefy.toast.open({
-        duration: messageDuration,
-        message: `<b>Error</b>: Not implemented yet!`,
-        type: "is-danger",
-      });
+      this.$buefy.toast.open(createMsg('Not implemented yet!','error'));
     },
     restartService: function (svc) {
       console.log(svc);
-      this.$buefy.toast.open({
-        duration: messageDuration,
-        message: `<b>Error</b>: Not implemented yet!`,
-        type: "is-danger",
-      });
+      this.$buefy.toast.open(createMsg('Not implemented yet!','error'));
     },
     editService: function (svc) {
       console.log(svc);
-      this.$buefy.toast.open({
-        duration: messageDuration,
-        message: `<b>Error</b>: Not implemented yet!`,
-        type: "is-danger",
-      });
+      this.$buefy.toast.open(createMsg('Not implemented yet!','error'));
     },
     deleteService: function (svc) {
       console.log(svc);
-      this.$buefy.toast.open({
-        duration: messageDuration,
-        message: `<b>Error</b>: Not implemented yet!`,
-        type: "is-danger",
-      });
+      this.$buefy.toast.open(createMsg('Not implemented yet!','error'));
     },
   },
   // Lifecycle hooks
