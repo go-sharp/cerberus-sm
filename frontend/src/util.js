@@ -45,4 +45,28 @@ function createMsg(msg, typ, duration) {
     };
 }
 
-export { isLoading, createMsg };
+/**
+ * Simple Debouncer to defer execution of the passed function.
+ * The 'this' keyword is bound to the component passed to the constructor.
+ */
+class Debouncer {
+    constructor() {
+        this._keys = {};
+    }
+
+    /**
+     * Defers execution of the passed function.
+     * @param {string} key - Unique key for the passed function.
+     * @param {function} fn - The function that will be executed after the defined delay.
+     * @param {number} [delay=500] - Delay for the execution of the passed function.
+     */
+    delay(key, fn, delay = 500) {
+        if(typeof fn !== 'function') throw new Error('Debouncer.delay: only functions allowed for fn.');
+        const id  = this._keys[key];
+        if (id) clearInterval(id);
+        
+        this._keys[key] = setTimeout(fn, delay);
+    }
+}
+
+export { isLoading, createMsg, Debouncer };

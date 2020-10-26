@@ -75,6 +75,14 @@ func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error
 	return svcs, nil
 }
 
+// InstallService installs a new service.
+func (s *Services) InstallService(data map[string]interface{}) error {
+	defer s.handlePanic()
+
+	svc := mapServiceItemToSvcConfig(data)
+	return cerberus.InstallService(svc)
+}
+
 // ShowFileDialog displays a file dialog to request a file path.
 func (s *Services) ShowFileDialog(data map[string]interface{}) string {
 	dir := false
@@ -126,6 +134,12 @@ func (s *Services) getServices() (svcs []serviceInfo, err error) {
 	}
 
 	return svcs, nil
+}
+
+func (s *Services) handlePanic() {
+	if p := recover(); p != nil {
+		s.log.Errorf("panic in function call: %v", p)
+	}
 }
 
 type serviceInfo struct {
