@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/go-sharp/cerberus/v2"
 	"github.com/wailsapp/wails"
@@ -39,45 +41,38 @@ func (s *Services) WailsInit(runtime *wails.Runtime) error {
 
 // LoadOverviewServices loads the service data for the overview page.
 func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error) {
-	// services, err := s.getServices()
-	// if err != nil {
-	// 	s.log.Error(err.Error())
-	// 	return svcs, err
-	// }
+	services, err := s.getServices()
+	if err != nil {
+		s.log.Error(err.Error())
+		return svcs, err
+	}
 
-	// for _, s := range services {
-	// 	svcs = append(svcs, OverviewServiceItem{
-	// 		Name:        s.cbCfg.Name,
-	// 		Description: s.cbCfg.Desc,
-	// 		DisplayName: s.cbCfg.DisplayName,
-	// 		StartType:   s.mgrCfg.StartType,
-	// 		State:       uint32(s.status.State),
-	// 	})
-	// }
-
-	svcs = []OverviewServiceItem{
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
-		{DisplayName: "Test Service 1", Description: "A test service 1 description", Name: "TestSvc1", StartType: 2, State: 1},
-		{DisplayName: "Test Service 2", Description: "A test service 2 description", Name: "TestSvc2", StartType: 4, State: 3},
+	for _, s := range services {
+		svcs = append(svcs, OverviewServiceItem{
+			Name:        s.cbCfg.Name,
+			Description: s.cbCfg.Desc,
+			DisplayName: s.cbCfg.DisplayName,
+			StartType:   s.mgrCfg.StartType,
+			State:       uint32(s.status.State),
+		})
 	}
 
 	return svcs, nil
 }
 
+// LoadService gets the current configuration for a service.
+func (s *Services) LoadService(name string) (svc ServiceItem, err error) {
+	cfg, err := cerberus.LoadServiceCfg(name)
+	if err != nil {
+		return ServiceItem{}, err
+	}
+
+	return mapSvcCfgToSvcItem(cfg), nil
+}
+
 // InstallService installs a new service.
-func (s *Services) InstallService(data map[string]interface{}) error {
-	defer s.handlePanic()
+func (s *Services) InstallService(data map[string]interface{}) (err error) {
+	defer s.handlePanic(&err)
 
 	svc := mapServiceItemToSvcConfig(data)
 	return cerberus.InstallService(svc)
@@ -94,6 +89,105 @@ func (s *Services) ShowFileDialog(data map[string]interface{}) string {
 		return s.r.Dialog.SelectDirectory()
 	}
 	return s.r.Dialog.SelectFile()
+}
+
+// DeleteService removes the service with the given name.
+func (s *Services) DeleteService(name string) (err error) {
+	return cerberus.RemoveService(name)
+}
+
+// RestartService stops and restart a service and waits until completion.
+func (s *Services) RestartService(name string) (err error) {
+	defer s.handlePanic(&err)
+
+	if err = s.StopService(name); err != nil {
+		return err
+	}
+
+	return s.StartService(name)
+}
+
+// StopService stops a running service and waits until it is stopped.
+func (s *Services) StopService(name string) (err error) {
+	defer s.handlePanic(&err)
+
+	service, err := s.mgr.OpenService(name)
+	if err != nil {
+		return err
+	}
+
+	status, err := service.Query()
+	if err != nil {
+		return err
+	}
+
+	if status.State == svc.Stopped {
+		return nil
+	}
+
+	status, err = service.Control(svc.Stop)
+	if err != nil {
+		return err
+	}
+
+	cancel := time.After(30 * time.Second)
+	for {
+		status, err = service.Query()
+		if err != nil {
+			return err
+		}
+
+		if status.State == svc.Stopped {
+			return nil
+		}
+
+		select {
+		case <-cancel:
+			return errors.New("timeout: failed to stop service")
+		default:
+		}
+	}
+}
+
+// StartService starts the passed service and waits until it is running.
+func (s *Services) StartService(name string) (err error) {
+	defer s.handlePanic(&err)
+
+	service, err := s.mgr.OpenService(name)
+	if err != nil {
+		return err
+	}
+
+	status, err := service.Query()
+	if err != nil {
+		return err
+	}
+
+	if status.State == svc.Running {
+		return nil
+	}
+
+	if err := service.Start(); err != nil {
+		return err
+	}
+
+	cancel := time.After(30 * time.Second)
+	for {
+		status, err = service.Query()
+		if err != nil {
+			return err
+		}
+
+		if status.State == svc.Running {
+			return nil
+		}
+
+		select {
+		case <-cancel:
+			return errors.New("timeout: failed to start service")
+		default:
+		}
+	}
 }
 
 func (s *Services) getServices() (svcs []serviceInfo, err error) {
@@ -136,9 +230,12 @@ func (s *Services) getServices() (svcs []serviceInfo, err error) {
 	return svcs, nil
 }
 
-func (s *Services) handlePanic() {
+func (s *Services) handlePanic(err *error) {
 	if p := recover(); p != nil {
 		s.log.Errorf("panic in function call: %v", p)
+		if err != nil {
+			*err = fmt.Errorf("unhandled error occured: %v", p)
+		}
 	}
 }
 

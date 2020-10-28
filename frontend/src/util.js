@@ -1,4 +1,3 @@
-
 export const LOADING_EVENT = 'loading';
 
 /**
@@ -41,7 +40,7 @@ function createMsg(msg, typ, duration) {
     return {
         duration,
         message: `<b>${title}</b>: ${msg}`,
-        type
+        type,
     };
 }
 
@@ -61,12 +60,41 @@ class Debouncer {
      * @param {number} [delay=500] - Delay for the execution of the passed function.
      */
     delay(key, fn, delay = 500) {
-        if(typeof fn !== 'function') throw new Error('Debouncer.delay: only functions allowed for fn.');
-        const id  = this._keys[key];
+        if (typeof fn !== 'function')
+            throw new Error('Debouncer.delay: only functions allowed for fn.');
+        const id = this._keys[key];
         if (id) clearInterval(id);
-        
+
         this._keys[key] = setTimeout(fn, delay);
     }
 }
 
-export { isLoading, createMsg, Debouncer };
+/**
+ * Checks if two objects are the same. 
+ * @param {*} a - Instance a. 
+ * @param {*} b - Instance b.
+ */
+function isEqualObj(a, b) {
+    if (typeof a !== typeof b) return false;
+
+    let same = true;
+    if (Array.isArray(a)) {
+        if (a.length !== b.length) return false;
+        for (const idx in a) {
+            same = same && isEqualObj(a[idx], b[idx]);
+        }
+        return same;
+    } 
+
+    if (typeof a === 'object') {
+        for (const key in a) {
+            same = same && isEqualObj(a[key], b[key]);
+        }
+
+        return same;
+    }
+
+    return a === b;
+}
+
+export { isLoading, createMsg, Debouncer, isEqualObj };

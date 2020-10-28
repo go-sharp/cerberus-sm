@@ -22,6 +22,18 @@ type ServiceItem struct {
 	Env         []string `json:"env,omitempty"`
 }
 
+func mapSvcCfgToSvcItem(svcCfg *cerberus.SvcConfig) (svc ServiceItem) {
+	return ServiceItem{
+		Description: svcCfg.Desc,
+		Args:        svcCfg.Args,
+		DisplayName: svcCfg.DisplayName,
+		Env:         svcCfg.Env,
+		ExePath:     svcCfg.ExePath,
+		Name:        svcCfg.Name,
+		WorkDir:     svcCfg.WorkDir,
+	}
+}
+
 func mapServiceItemToSvcConfig(service map[string]interface{}) cerberus.SvcConfig {
 	svc := cerberus.SvcConfig{
 		Name:    service["name"].(string),

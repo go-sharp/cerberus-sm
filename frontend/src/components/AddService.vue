@@ -134,7 +134,7 @@ export default {
                     this.$buefy.toast.open(
                         createMsg(
                             'Successfully installed service.',
-                            'is-success'
+                            'success'
                         )
                     );
                     this.$router.push({ name: OverviewRoute });

@@ -4,7 +4,7 @@
             <!-- Name field -->
             <b-field
                 label="Name:"
-                :message="messages.name.msg"
+                :message="isNew ? messages.name.msg : ''"
                 :type="messages.name.type"
             >
                 <b-input
@@ -38,7 +38,7 @@
             <!-- Executable Path field -->
             <b-field
                 label="Executable Path:"
-                :message="messages.exe_path.msg"
+                :message="isNew ? messages.exe_path.msg : ''"
                 :type="messages.exe_path.type"
             >
                 <b-input
