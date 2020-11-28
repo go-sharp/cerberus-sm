@@ -3,6 +3,17 @@
 
 // Set your colors
 $primary: #387891;
+$background-color: #363636;
+$background-contrast: #a2a2a2;
+$foreground-color: #eee;
+$input-background-color: #292929;
+
+$table-background-color: transparent;
+$table-striped-row-even-background-color: transparent;
+$table-color: $background-contrast;
+$table-head-cell-color:  $background-contrast;
+$table-cell-heading-color: $background-contrast;
+
 
 // Setup $colors to use as bulma classes (e.g. 'is-twitter')
 $colors: (

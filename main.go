@@ -9,6 +9,12 @@ import (
 	"github.com/wailsapp/wails"
 )
 
+var version = "v0.0.0"
+
+func Version() string {
+	return version
+}
+
 func main() {
 
 	// Check if we are called with command line arguments
@@ -39,6 +45,7 @@ func main() {
 		})
 
 		app.Bind(svcs)
+		app.Bind(Version)
 		app.Run()
 	}
 }

@@ -46,7 +46,6 @@ function createMsg(msg, typ, duration) {
 
 /**
  * Simple Debouncer to defer execution of the passed function.
- * The 'this' keyword is bound to the component passed to the constructor.
  */
 class Debouncer {
     constructor() {
@@ -60,8 +59,7 @@ class Debouncer {
      * @param {number} [delay=500] - Delay for the execution of the passed function.
      */
     delay(key, fn, delay = 500) {
-        if (typeof fn !== 'function')
-            throw new Error('Debouncer.delay: only functions allowed for fn.');
+        if (typeof fn !== 'function') throw new Error('Debouncer.delay: only functions allowed for fn.');
         const id = this._keys[key];
         if (id) clearInterval(id);
 
@@ -70,28 +68,33 @@ class Debouncer {
 }
 
 /**
- * Checks if two objects are the same. 
- * @param {*} a - Instance a. 
+ * Checks if two objects are the same.
+ * @param {*} a - Instance a.
  * @param {*} b - Instance b.
  */
 function isEqualObj(a, b) {
     if (typeof a !== typeof b) return false;
 
-    let same = true;
     if (Array.isArray(a)) {
         if (a.length !== b.length) return false;
-        for (const idx in a) {
-            same = same && isEqualObj(a[idx], b[idx]);
+
+        const tmpA = [...a], tmpB = [...b];
+
+        tmpA.sort();
+        tmpB.sort();
+
+        for (const idx in tmpA) {
+            if(!isEqualObj(tmpA[idx], tmpB[idx])) return false;
         }
-        return same;
-    } 
+        return true;
+    }
 
     if (typeof a === 'object') {
         for (const key in a) {
-            same = same && isEqualObj(a[key], b[key]);
+            if (!isEqualObj(a[key], b[key])) return false;
         }
 
-        return same;
+        return true;
     }
 
     return a === b;

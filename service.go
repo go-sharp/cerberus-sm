@@ -18,7 +18,7 @@ type Services struct {
 	mgr *mgr.Mgr
 
 	// Properties that will be bound
-	IsAdmin bool
+	isAdmin bool
 }
 
 // WailsInit initialize the struct with the wails runtime.
@@ -30,17 +30,22 @@ func (s *Services) WailsInit(runtime *wails.Runtime) error {
 	m, err := mgr.Connect()
 	if err != nil {
 		s.log.Errorf("failed to connect to service manager: %v", err)
-		s.IsAdmin = false
+		s.isAdmin = false
 
 		return nil
 	}
-	s.mgr, s.IsAdmin = m, true
+	s.mgr, s.isAdmin = m, true
 	s.log.Debug("successfully connected to the local service manager")
 	return nil
 }
 
+func (s *Services) IsAdmin() bool {
+	return s.isAdmin
+}
+
 // LoadOverviewServices loads the service data for the overview page.
 func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error) {
+
 	services, err := s.getServices()
 	if err != nil {
 		s.log.Error(err.Error())
@@ -54,6 +59,36 @@ func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error
 			DisplayName: s.cbCfg.DisplayName,
 			StartType:   s.mgrCfg.StartType,
 			State:       uint32(s.status.State),
+		})
+	}
+
+	return svcs, nil
+}
+
+func (s *Services) GetDependOnSvc() (svcs []DependOnSvcItem, err error) {
+	s.log.Debug("loading depend on services")
+
+	services, err := s.mgr.ListServices()
+	if err != nil {
+		return svcs, err
+	}
+
+	for _, sname := range services {
+		sv, err := s.mgr.OpenService(sname)
+		if err != nil {
+			s.log.Errorf("skipping service '%v': %v", sname, err)
+			continue
+		}
+
+		cfg, err := sv.Config()
+		if err != nil {
+			s.log.Errorf("skipping service '%v': %v", sname, err)
+			continue
+		}
+
+		svcs = append(svcs, DependOnSvcItem{
+			Name:        sname,
+			DisplayName: cfg.DisplayName,
 		})
 	}
 
@@ -75,7 +110,29 @@ func (s *Services) InstallService(data map[string]interface{}) (err error) {
 	defer s.handlePanic(&err)
 
 	svc := mapServiceItemToSvcConfig(data)
-	return cerberus.InstallService(svc)
+
+	if err := cerberus.InstallService(svc); err != nil {
+		return err
+	}
+
+	if err := cerberus.UpdateService(svc); err != nil {
+		_ = cerberus.RemoveService(svc.Name)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Services) UpdateService(data map[string]interface{}) (err error) {
+	defer s.handlePanic(&err)
+
+	svc := mapServiceItemToSvcConfig(data)
+
+	if err := cerberus.UpdateService(svc); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // ShowFileDialog displays a file dialog to request a file path.
@@ -191,7 +248,7 @@ func (s *Services) StartService(name string) (err error) {
 }
 
 func (s *Services) getServices() (svcs []serviceInfo, err error) {
-	if !s.IsAdmin {
+	if !s.isAdmin {
 		return svcs, fmt.Errorf("access denied: you need to be an administrator")
 	}
 
