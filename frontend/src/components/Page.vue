@@ -25,7 +25,7 @@ export default {
 
 .page__header {
   padding-bottom: 0.5rem;
-  border-bottom: 3px solid $primary;
+  border-bottom: 3px outset $background-contrast;
 }
 
 .page__menu {
@@ -45,5 +45,9 @@ export default {
   min-height: 50%;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.title {
+  color: $background-contrast;
 }
 </style>

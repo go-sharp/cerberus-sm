@@ -28,6 +28,7 @@
             </div>
         </section>
         <b-table
+            v-if="services.length !== 0"
             :data="services"
             default-sort-direction="asc"
             sort-icon="arrow-up"

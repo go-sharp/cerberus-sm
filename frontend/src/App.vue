@@ -42,9 +42,7 @@ export default {
 
 .main {
   height: 100%;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.6);
+  background-color: $background-color;
   overflow: hidden;
 }
 
@@ -52,7 +50,12 @@ export default {
   margin-bottom: 2rem;
 }
 
-.help {
- color: $primary; 
+.title {
+  color: $primary;
 }
+
+.label, .help {
+  color: $background-contrast;
+}
+
 </style>
