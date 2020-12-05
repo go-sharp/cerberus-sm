@@ -23,7 +23,10 @@
             <div class="hero-body">
                 <div class="container">
                     <h2 class="title">No installed services found!</h2>
-                    <h3 class="subtitle">Click on "New Service" and install your first cerberus service.</h3>
+                    <h3 class="subtitle">
+                        Click on "New Service" and install your first cerberus
+                        service.
+                    </h3>
                 </div>
             </div>
         </section>
@@ -71,6 +74,7 @@
                 sortable
                 centered
                 v-slot="props"
+                cell-class="table-icon"
             >
                 <StateIcon :state="props.row.state" />
             </b-table-column>
@@ -81,6 +85,7 @@
                 sortable
                 centered
                 v-slot="props"
+                cell-class="table-icon"
             >
                 <StartTypeIcon :startType="props.row.start_type" />
             </b-table-column>
@@ -194,7 +199,7 @@ export default {
             );
         },
         editService: function (svc) {
-            this.$router.push({name: EditRoute, params: { svc: svc }});
+            this.$router.push({ name: EditRoute, params: { svc: svc } });
         },
         deleteService: function (svc) {
             this.runBackgroundTask(svc, 'DeleteService', 'deleted', 'delete');
@@ -232,13 +237,25 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import '../styles';
+
 .action-item {
     display: flex;
     align-items: center;
 
     span:nth-child(0n + 2) {
         margin-left: 15px;
+    }
+}
+
+.table-icon {
+    color: $primary;
+}
+
+@media screen and (max-width: 1023px) {
+    .table-wrapper {
+        overflow: visible;
     }
 }
 </style>
