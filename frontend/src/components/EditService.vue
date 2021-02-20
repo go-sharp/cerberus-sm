@@ -23,7 +23,17 @@
             </div>
         </template>
         <!-- Page content -->
-        <edit-service-base v-model="model" :is-new="false" />
+        <b-tabs v-model="activeTab">
+            <b-tab-item value="base" label="Base Configuration">
+                <edit-service-base v-model="model" :is-new="false" />
+            </b-tab-item>
+            <b-tab-item value="extended" label="Extended Configuration">
+                Here comes the extended configuration!
+            </b-tab-item>
+            <b-tab-item value="recovery" label="Recovery Actions">
+                Here comes the recovery actions!
+            </b-tab-item>
+        </b-tabs>
     </page>
 </template>
 
@@ -46,13 +56,15 @@ export default {
         };
     },
     computed: {
-        hasChanges: function() {
-            return !isEqualObj(this.model, this.currentSvc);            
-        }
+        hasChanges: function () {
+            return !isEqualObj(this.model, this.currentSvc);
+        },
     },
     methods: {
         updateService: function () {
-            this.$buefy.toast.open(createMsg("This feature isn't implemented yet!", 'info'))
+            this.$buefy.toast.open(
+                createMsg("This feature isn't implemented yet!", 'info')
+            );
             /* Todo: Implement Backend UpdateService method
             isLoading(true);
             window.backend.Services.UpdateService(this.model)
@@ -86,5 +98,35 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" >
+@import '../styles';
+.b-tabs {
+    .tabs {
+        ul {
+            border-bottom-color: $background-contrast;
+            li {
+                &.is-active a {
+                    color: $primary;
+                    border-bottom-color: $primary;
+                    &:hover {
+                        color: $primary;
+                        border-bottom-color: $primary;
+                    }
+                }
+
+                a {
+                    &:hover {
+                        color: white;
+                        border-bottom-color: white;
+                    }
+                    color: $background-contrast;
+                    border-bottom-color: $background-contrast;
+                }
+            }
+        }
+    }
+    .tab-content {
+        padding: 16px 32px;
+    }
+}
 </style>

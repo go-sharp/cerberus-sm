@@ -50,7 +50,6 @@ export default {
 
 .level {
   padding: 0.5rem;
-  border-bottom: 3px outset $background-contrast;
 }
 
 .title {

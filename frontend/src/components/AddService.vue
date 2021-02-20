@@ -24,11 +24,21 @@
             </div>
         </template>
         <!-- Page content -->
-        <edit-service-base
-            v-model="model"
-            :is-new="true"
-            :field-messages="validations"
-        />
+        <b-tabs v-model="activeTab">
+            <b-tab-item value="base" label="Base Configuration">
+                <edit-service-base
+                    v-model="model"
+                    :is-new="true"
+                    :field-messages="validations"
+                />
+            </b-tab-item>
+            <b-tab-item value="extended" label="Extended Configuration">
+                Here comes the extended configuration!
+            </b-tab-item>
+            <b-tab-item value="recovery" label="Recovery Actions">
+                Here comes the recovery actions!
+            </b-tab-item>
+        </b-tabs>
     </page>
 </template>
 
@@ -51,6 +61,7 @@ export default {
                 exe_path: { msg: '* required', hasValidated: false },
             },
             displayEdited: false,
+            activeTab: 'base',
         };
     },
     watch: {
@@ -132,21 +143,49 @@ export default {
                 .then(() => {
                     isLoading(false);
                     this.$buefy.toast.open(
-                        createMsg(
-                            'Successfully installed service.',
-                            'success'
-                        )
+                        createMsg('Successfully installed service.', 'success')
                     );
                     this.$router.push({ name: OverviewRoute });
                 })
                 .catch((reason) => {
                     isLoading(false);
-                    this.$buefy.toast.open(createMsg(reason, 'error'));                    
+                    this.$buefy.toast.open(createMsg(reason, 'error'));
                 });
         },
     },
 };
 </script>
 
-<style>
+<style lang="scss" >
+@import '../styles';
+.b-tabs {
+    .tabs {
+        ul {
+            margin: 0;
+            border-bottom-color: $background-contrast;
+            li {
+                &.is-active a {
+                    color: $primary;
+                    border-bottom-color: $primary;
+                    &:hover {
+                        color: $primary;
+                        border-bottom-color: $primary;
+                    }
+                }
+
+                a {
+                    &:hover {
+                        color: white;
+                        border-bottom-color: white;
+                    }
+                    color: $background-contrast;
+                    border-bottom-color: $background-contrast;
+                }
+            }
+        }
+    }
+    .tab-content.tab-content {
+        padding: 16px 0;
+    }
+}
 </style>

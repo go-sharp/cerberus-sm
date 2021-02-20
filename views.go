@@ -13,6 +13,7 @@ type OverviewServiceItem struct {
 
 // ServiceItem represents a service.
 type ServiceItem struct {
+	// Base configuration
 	Name        string   `json:"name,omitempty"`
 	DisplayName string   `json:"display_name,omitempty"`
 	Description string   `json:"description,omitempty"`
@@ -20,18 +21,61 @@ type ServiceItem struct {
 	WorkDir     string   `json:"work_dir,omitempty"`
 	Args        []string `json:"args,omitempty"`
 	Env         []string `json:"env,omitempty"`
+
+	// Extended configurations
+	RecoveryActions map[int]ServiceRecoveryActionItem `json:"recovery_actions,omitempty"`
+	StopSignal      int                               `json:"stop_signal,omitempty"`
+
+	// SCM Properties (Admin rights require to load this properties)
+	Dependencies []string `json:"dependencies,omitempty"`
+	ServiceUser  string   `json:"service_user,omitempty"`
+	Password     *string  `json:"password,omitempty"`
+	StartType    int      `json:"start_type,omitempty"`
+}
+
+// ServiceRecoveryActionItem is the frontend view for the recovery actions.
+type ServiceRecoveryActionItem struct {
+	ExitCode    int      `json:"exit_code,omitempty"`
+	Action      int      `json:"action,omitempty"`
+	Delay       int      `json:"delay,omitempty"`
+	MaxRestarts int      `json:"max_restarts,omitempty"`
+	ResetAfter  int      `json:"reset_after,omitempty"`
+	Program     string   `json:"program,omitempty"`
+	Arguments   []string `json:"arguments,omitempty"`
 }
 
 func mapSvcCfgToSvcItem(svcCfg *cerberus.SvcConfig) (svc ServiceItem) {
 	return ServiceItem{
-		Description: svcCfg.Desc,
-		Args:        svcCfg.Args,
-		DisplayName: svcCfg.DisplayName,
-		Env:         svcCfg.Env,
-		ExePath:     svcCfg.ExePath,
 		Name:        svcCfg.Name,
+		DisplayName: svcCfg.DisplayName,
+		Description: svcCfg.Desc,
+		ExePath:     svcCfg.ExePath,
 		WorkDir:     svcCfg.WorkDir,
+		Args:        svcCfg.Args,
+		Env:         svcCfg.Env,
+
+		RecoveryActions: mapSvcCfgRecoveryActionToViewItem(svcCfg.RecoveryActions),
+		StopSignal:      int(svcCfg.StopSignal),
+		Dependencies:    svcCfg.Dependencies,
+		ServiceUser:     svcCfg.ServiceUser,
+		StartType:       int(svcCfg.StartType),
 	}
+}
+
+func mapSvcCfgRecoveryActionToViewItem(actions map[int]cerberus.SvcRecoveryAction) map[int]ServiceRecoveryActionItem {
+	uiActions := map[int]ServiceRecoveryActionItem{}
+	for k, v := range actions {
+		uiActions[k] = ServiceRecoveryActionItem{
+			ExitCode:    v.ExitCode,
+			Action:      int(v.Action),
+			Delay:       v.Delay,
+			MaxRestarts: v.MaxRestarts,
+			ResetAfter:  int(v.ResetAfter.Seconds()),
+			Program:     v.Program,
+			Arguments:   v.Arguments,
+		}
+	}
+	return uiActions
 }
 
 func mapServiceItemToSvcConfig(service map[string]interface{}) cerberus.SvcConfig {
