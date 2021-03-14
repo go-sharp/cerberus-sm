@@ -77,7 +77,7 @@ export default {
 .control.has-icons-left .select:focus ~ .icon,
 .control.has-icons-right .input:focus ~ .icon,
 .control.has-icons-right .select:focus ~ .icon {
-  color: $primary;
+    color: $primary;
 }
 
 .taginput.control .autocomplete.control {
@@ -95,6 +95,34 @@ export default {
 
         &:hover {
             background-color: $background-contrast;
+            .media {
+                h3 {
+                    color: $black;
+                }
+            }
+        }
+
+        &.is-active {
+            &:hover {
+                .media {
+                    color: $black;
+                    h3 {
+                        color: $black;
+                    }
+                }
+            }
+            .media {
+                h3 {
+                    color: $white;
+                }
+            }
+        }
+
+        .media {
+            h3 {
+                color: $background-contrast;
+                margin-bottom: 0;
+            }
         }
     }
 }

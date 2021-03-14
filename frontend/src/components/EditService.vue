@@ -31,7 +31,7 @@
                 Here comes the extended configuration!
             </b-tab-item>
             <b-tab-item value="recovery" label="Recovery Actions">
-                Here comes the recovery actions!
+                <recovery-action></recovery-action>
             </b-tab-item>
         </b-tabs>
     </page>
@@ -42,9 +42,10 @@ import { isLoading, createMsg, isEqualObj } from '../util';
 import { OverviewRoute } from '../routes';
 import EditServiceBase from './EditServiceBase.vue';
 import { createEditBaseModel } from './models/service';
+import RecoveryAction from './recovery-action/RecoveryAction.vue';
 
 export default {
-    components: { EditServiceBase },
+    components: { EditServiceBase, RecoveryAction },
     props: {
         svc: String,
     },

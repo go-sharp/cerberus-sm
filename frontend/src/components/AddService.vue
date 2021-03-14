@@ -36,7 +36,7 @@
                 Here comes the extended configuration!
             </b-tab-item>
             <b-tab-item value="recovery" label="Recovery Actions">
-                Here comes the recovery actions!
+                <recovery-action></recovery-action>
             </b-tab-item>
         </b-tabs>
     </page>
@@ -47,11 +47,12 @@ import { isLoading, createMsg } from '../util';
 import { OverviewRoute } from '../routes';
 import EditServiceBase from './EditServiceBase.vue';
 import { createEditBaseModel } from './models/service';
+import RecoveryAction from './recovery-action/RecoveryAction.vue';
 
 const isValidServiceName = new RegExp(/^[a-zA-Z0-9_+\-!]+$/);
 
 export default {
-    components: { EditServiceBase },
+    components: { EditServiceBase, RecoveryAction },
     data() {
         return {
             OverviewRoute,

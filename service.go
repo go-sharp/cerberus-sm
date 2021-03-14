@@ -41,6 +41,31 @@ func (s *Services) WailsInit(runtime *wails.Runtime) error {
 
 // LoadOverviewServices loads the service data for the overview page.
 func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error) {
+
+	return []OverviewServiceItem{
+		{
+			Name:        "Test1",
+			DisplayName: "Super Test 1",
+			Description: "What a test",
+			State:       0,
+			StartType:   0,
+		},
+		{
+			Name:        "Test2",
+			DisplayName: "Super Test 2",
+			Description: "What a test",
+			State:       1,
+			StartType:   2,
+		},
+		{
+			Name:        "Test3",
+			DisplayName: "Super Test 3",
+			Description: "What a test",
+			State:       2,
+			StartType:   3,
+		},
+	}, nil
+
 	services, err := s.getServices()
 	if err != nil {
 		s.log.Error(err.Error())
