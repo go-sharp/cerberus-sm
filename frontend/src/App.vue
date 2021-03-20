@@ -88,7 +88,8 @@ export default {
 .dropdown-content {
     background-color: $background-color;
     border-collapse: separate;
-    box-shadow: 0 0.5em 1em -0.125em #a2a2a24f, 0 0px 0 1px #a2a2a24f;
+    box-shadow: 0 0.5em 1.5em -0.125em #a2a2a2, 0 0px 0 1px #a2a2a2;
+    
 
     .dropdown-item {
         color: $background-contrast;

@@ -1,5 +1,5 @@
 <template>
-    <b-dropdown v-model="selected" aria-role="list">
+    <b-dropdown class="recovery-action-action-dropdown" v-model="selected" aria-role="list">
         <template #trigger>
             <b-button
                 :label="selected.text"
@@ -63,20 +63,19 @@ export const actions = [
 export default {
     data() {
         return {
-            selected: actions.find(a => a.value === this.action),
+            selected: actions.find(a => a.value === this.value),
             actions,
         };
     },
     props: {
-        action: {
+        value: {
             type: Number,
             default: NoAction,
         },
     },
     methods: {
         changeSelection: function () {
-            //console.log(arguments, arguments);
-            console.log(this.selected.text, this.selected);
+            this.$emit('input', this.selected.value);
         },
     },
 };
