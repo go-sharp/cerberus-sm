@@ -3,12 +3,12 @@
         <!-- ExitCode -->
 
         <b-field
-            label="ExitCode:"
+            label="Exit Code:"
             class="recovery-action-editor__number-item"
             :type="validExitCode ? '' : 'is-danger'"
             :message="validExitCodeMsg"
         >
-            <b-numberinput :disabled="!isNew" v-model="model.exitCode" :controls="false"></b-numberinput>
+            <b-numberinput :disabled="!isNew" v-model="model.exit_code" :controls="false"></b-numberinput>
         </b-field>
 
         <!-- Action & Delay -->
@@ -18,7 +18,7 @@
                     <action-dropdown v-model="model.action"></action-dropdown>
                 </b-field>
             </div>
-            <div class="column is-half">
+            <div class="column is-half" v-if="showRestart">
                 <b-field
                     label="Delay:"
                     class="recovery-action-editor__number-item"
@@ -31,25 +31,25 @@
         </div>
 
         <!-- MaxRestarts & ResetAfter -->
-        <div class="columns">
+        <div class="columns" v-if="showRestart">
             <div class="column is-half">
                 <b-field
                     label="Max Restarts:"
                     class="recovery-action-editor__number-item"
-                    :message="errors.maxRestarts || 'Maximal amount of restarts'"
-                    :type="errors.maxRestarts ? 'is-danger' : ''"
+                    :message="errors.max_restarts || 'Maximal amount of restarts'"
+                    :type="errors.max_restarts ? 'is-danger' : ''"
                 >
-                    <b-numberinput v-model="model.maxRestarts" :controls="false"></b-numberinput>
+                    <b-numberinput v-model="model.max_restarts" :controls="false"></b-numberinput>
                 </b-field>
             </div>
             <div class="column is-half">
                 <b-field
                     label="Reset After:"
                     class="recovery-action-editor__number-item"
-                    :message="errors.resetAfter || 'Resets restart counter after n seconds'"
-                    :type="errors.resetAfter ? 'is-danger' : ''"
+                    :message="errors.reset_after || 'Resets restart counter after n seconds'"
+                    :type="errors.reset_after ? 'is-danger' : ''"
                 >
-                    <b-numberinput v-model="model.resetAfter" :controls="false"></b-numberinput>
+                    <b-numberinput v-model="model.reset_after" :controls="false"></b-numberinput>
                 </b-field>
             </div>
         </div>
@@ -67,7 +67,7 @@
             <!-- Arguments field -->
             <b-field label="Arguments:">
                 <b-taginput
-                    v-model="model.args"
+                    v-model="model.arguments"
                     icon="format-text-variant"
                     ellipsis
                     allow-duplicates
@@ -92,28 +92,31 @@ export default {
     props: {
         value: Object,
         isNew: Boolean,
-        excludeErrorCodes: Array,
+        excludedExitCodes: Array,
     },
     data() {
         return {
             model: {
-                exitCode: 0,
+                exit_code: 0,
                 action: 1,
                 delay: 0,
-                maxRestarts: 0,
-                resetAfter: 0,
+                max_restarts: 0,
+                reset_after: 0,
                 program: '',
-                args: [],
+                arguments: [],
                 ...this.value,
             },
             isValid: false,
             errors: {
                 delay: '',
-                maxRestarts: '',
-                resetAfter: '',
+                max_restarts: '',
+                reset_after: '',
                 program: '',
             },
         };
+    },
+    mounted: function () {
+        this.validateModel();
     },
     computed: {
         showProgram: function () {
@@ -121,16 +124,21 @@ export default {
 
             return false;
         },
-        validExitCode: function () {
-            if (!Array.isArray(this.excludeErrorCodes)) return true;
+        showRestart: function () {
+            if (this.model.action === Restart || this.model.action === RestartRunProgram) return true;
 
-            if (typeof this.model.exitCode !== 'number') return false;
-            return !this.excludeErrorCodes.find((e) => e === this.model.exitCode);
+            return false;
+        },
+        validExitCode: function () {
+            if (!Array.isArray(this.excludedExitCodes) || !this.isNew) return true;
+
+            if (typeof this.model.exit_code !== 'number') return false;
+            return !this.excludedExitCodes.find((e) => e === this.model.exit_code);
         },
         validExitCodeMsg: function () {
             if (this.validExitCode) return '';
 
-            if (typeof this.model.exitCode === 'number') return 'Exit code already used';
+            if (typeof this.model.exit_code === 'number') return 'Exit code already used';
 
             return 'Empty exit code is not valid';
         },
@@ -139,9 +147,9 @@ export default {
         validateModel: function () {
             this.errors.delay = typeof this.model.delay === 'number' ? null : 'Must be a number';
 
-            this.errors.maxRestarts = typeof this.model.maxRestarts === 'number' ? null : 'Must be a number';
+            this.errors.max_restarts = typeof this.model.max_restarts === 'number' ? null : 'Must be a number';
 
-            this.errors.resetAfter = typeof this.model.resetAfter === 'number' ? null : 'Must be a number';
+            this.errors.reset_after = typeof this.model.reset_after === 'number' ? null : 'Must be a number';
 
             if (this.model.action === RunProgram || this.model.action === RestartRunProgram) {
                 this.errors.program =
@@ -171,10 +179,16 @@ export default {
         isValid: function (val) {
             this.$emit(ValidationChanged, val);
         },
-        action: function (val) {
-            if (val === NoAction || val == Restart) {
-                this.program = '';
-                this.args = [];
+        'model.action': function (val) {
+            if (val === NoAction || val === Restart) {
+                this.model.program = '';
+                this.model.arguments = [];
+            }
+
+            if (val === NoAction || val === RunProgram) {
+                this.model.delay = 0;
+                this.model.max_restarts = 0;
+                this.model.reset_after = 0;
             }
         },
         model: {
@@ -183,13 +197,13 @@ export default {
 
                 if (this.isValid) {
                     this.$emit('input', {
-                        exitCode: this.model.exitCode,
+                        exit_code: this.model.exit_code,
                         action: this.model.action,
                         delay: this.model.delay,
-                        resetAfter: this.model.resetAfter,
-                        maxRestarts: this.model.maxRestarts,
+                        reset_after: this.model.reset_after,
+                        max_restarts: this.model.max_restarts,
                         program: this.model.program,
-                        args: this.model.args,
+                        arguments: this.model.arguments,
                     });
                 }
             },
