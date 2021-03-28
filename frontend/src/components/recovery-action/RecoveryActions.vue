@@ -6,7 +6,16 @@
                 <b-button v-if="!selected" @click="addAction" size="is-small" class="is-primary" icon-left="plus">
                     Add
                 </b-button>
-                <b-button v-if="selected" @click="updateAction" :disabled="!canSave" size="is-small" class="is-primary" icon-left="content-save-cog"> Update </b-button>
+                <b-button
+                    v-if="selected"
+                    @click="updateAction"
+                    :disabled="!canSave"
+                    size="is-small"
+                    class="is-primary"
+                    icon-left="content-save-cog"
+                >
+                    Update
+                </b-button>
                 <b-button v-if="selected" @click="cancelUpdate" size="is-small" icon-left="cancel"> Cancel </b-button>
             </div>
         </div>
@@ -14,15 +23,15 @@
         <section class="columns">
             <div class="column is-one-half">
                 <div class="recovery-actions__items">
-                    <template v-for="(item, index) in dataSource">
+                    <template v-for="(item, index) in sortedDataSource">
                         <action-item
                             class="recovery-actions__item"
                             :key="index"
                             :exitCode="item.exit_code"
                             :recoveryAction="item.action"
                             :disabled="!!selected"
-                            @edit="editItem(index)"
-                            @delete="deleteItem(index)"
+                            @edit="editItem(item)"
+                            @delete="deleteItem(item)"
                         ></action-item>
                     </template>
                 </div>
@@ -59,8 +68,8 @@ export default {
     props: {
         recoveryActions: {
             type: Array,
-            required: false
-        }
+            required: false,
+        },
     },
     data() {
         return {
@@ -68,41 +77,50 @@ export default {
             selected: null,
             dataSource: actionsSource,
             isNew: false,
-            canSave: false
+            canSave: false,
         };
     },
     computed: {
-        excludedExitCodes: function() {
-            return this.dataSource.map(a => a.exit_code);
-        }
+        excludedExitCodes: function () {
+            return this.dataSource.map((a) => a.exit_code);
+        },
+        sortedDataSource: function () {
+            const sorted = [...this.dataSource];
+            return sorted.sort((first, second) => {
+                if (first.exit_code > second.exit_code) return 1;
+                if (first.exit_code < second.exit_code) return -1;
+                return 0;
+            });
+        },
     },
     methods: {
-        cancelUpdate: function(){
+        cancelUpdate: function () {
             this.isNew = false;
             this.selected = null;
         },
-        updateAction: function() {
-            if(this.isNew) {
+        updateAction: function () {
+            if (this.isNew) {
                 this.dataSource.push(this.selected);
             } else {
-                const idx = this.dataSource.findIndex(a => a.exit_code === this.selected.exit_code);
+                const idx = this.dataSource.findIndex((a) => a.exit_code === this.selected.exit_code);
                 this.dataSource[idx] = this.selected;
             }
 
             this.selected = null;
             this.emitUpdate();
         },
-        emitUpdate: function() {
+        emitUpdate: function () {
             this.$emit('update:recoveryActions', this.dataSource);
         },
-        deleteItem: function(idx) {
+        deleteItem: function (item) {
+            const idx = this.dataSource.findIndex((i) => i.exit_code === item.exit_code);
+            if (idx < 0) return;
             this.dataSource.splice(idx, 1);
+            this.emitUpdate();
         },
-        editItem: function(idx) {
+        editItem: function (item) {
             this.isNew = false;
-            this.selected = {
-                ...this.dataSource[idx]
-            };
+            this.selected = item;
         },
         addAction: function () {
             this.isNew = true;
@@ -113,9 +131,9 @@ export default {
                 reset_after: 0,
                 max_restarts: 0,
                 program: '',
-                args: []
+                args: [],
             };
-        }
+        },
     },
 };
 </script>

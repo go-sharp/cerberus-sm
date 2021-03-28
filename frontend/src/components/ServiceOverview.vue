@@ -158,7 +158,7 @@
 <script>
 import { isLoading, createMsg } from '../util';
 import StateIcon from './StateIcon.vue';
-import StartTypeIcon from './StartTypeIcon.vue';
+import StartTypeIcon from './extended-config/StartTypeIcon.vue';
 import { EditRoute } from '../routes';
 
 export default {
