@@ -20,32 +20,34 @@
             </div>
         </div>
         <div class="recovery-actions__divider"></div>
-        <section class="columns">
-            <div class="column is-one-half">
-                <div class="recovery-actions__items">
-                    <template v-for="(item, index) in sortedDataSource">
-                        <action-item
-                            class="recovery-actions__item"
-                            :key="index"
-                            :exitCode="item.exit_code"
-                            :recoveryAction="item.action"
-                            :disabled="!!selected"
-                            @edit="editItem(item)"
-                            @delete="deleteItem(item)"
-                        ></action-item>
-                    </template>
+        <div class="recovery-actions__content">
+            <div class="columns">
+                <div class="column is-one-half">
+                    <div class="recovery-actions__items">
+                        <template v-for="(item, index) in sortedDataSource">
+                            <action-item
+                                class="recovery-actions__item"
+                                :key="index"
+                                :exitCode="item.exit_code"
+                                :recoveryAction="item.action"
+                                :disabled="!!selected"
+                                @edit="editItem(item)"
+                                @delete="deleteItem(item)"
+                            ></action-item>
+                        </template>
+                    </div>
+                </div>
+                <div class="column is-one-half">
+                    <recovery-action-editor
+                        v-if="selected"
+                        :isNew="isNew"
+                        :excludedExitCodes="excludedExitCodes"
+                        v-model="selected"
+                        @validationChanged="canSave = $event"
+                    ></recovery-action-editor>
                 </div>
             </div>
-            <div class="column is-one-half">
-                <recovery-action-editor
-                    v-if="selected"
-                    :isNew="isNew"
-                    :excludedExitCodes="excludedExitCodes"
-                    v-model="selected"
-                    @validationChanged="canSave = $event"
-                ></recovery-action-editor>
-            </div>
-        </section>
+        </div>
     </div>
 </template>
 
@@ -142,11 +144,16 @@ export default {
 @import '../../styles';
 
 .recovery-actions {
+    display: flex;
+    flex-flow: column nowrap;
+    max-height: 100%;
+
     .recovery-actions__menu {
         padding-left: 5px;
         padding-right: 5px;
         display: flex;
         justify-content: space-between;
+        flex: 0 0 auto;
 
         & > *:first-child {
             align-self: flex-end;
@@ -165,11 +172,21 @@ export default {
         height: 1px;
         margin: 5px;
         background-color: $background-contrast;
+        flex: 0 0 auto;
+    }
+
+    .recovery-actions__content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        & > .columns {
+            margin: 0;
+        }
     }
 
     .recovery-actions__items {
-        overflow: auto;
-        max-height: 70vh;
         padding: 10px;
     }
 

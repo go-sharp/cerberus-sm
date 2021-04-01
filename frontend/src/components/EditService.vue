@@ -102,8 +102,14 @@ export default {
 <style lang="scss" >
 @import '../styles';
 .b-tabs {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+
     .tabs {
         ul {
+            margin: 0;
             border-bottom-color: $background-contrast;
             li {
                 &.is-active a {
@@ -126,8 +132,20 @@ export default {
             }
         }
     }
-    .tab-content {
-        padding: 16px 32px;
+    
+    .tab-content.tab-content {
+        padding: 16px 0;
+        height: 100%;
+        max-height: 100%;
+        overflow-y: auto;
+
+        .tab-item {
+            max-height: 100%;
+
+            & > * {
+                max-width: 100%;
+            }
+        }
     }
 }
 </style>

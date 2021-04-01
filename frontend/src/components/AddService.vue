@@ -13,12 +13,7 @@
                 >
                     Install
                 </b-button>
-                <b-button
-                    size="is-small"
-                    icon-left="cancel"
-                    tag="router-link"
-                    :to="{ name: OverviewRoute }"
-                >
+                <b-button size="is-small" icon-left="cancel" tag="router-link" :to="{ name: OverviewRoute }">
                     Cancel
                 </b-button>
             </div>
@@ -26,11 +21,7 @@
         <!-- Page content -->
         <b-tabs v-model="activeTab">
             <b-tab-item value="base" label="Base Configuration">
-                <edit-service-base
-                    v-model="model"
-                    :is-new="true"
-                    :field-messages="validations"
-                />
+                <edit-service-base v-model="model" :is-new="true" :field-messages="validations" />
             </b-tab-item>
             <b-tab-item value="extended" label="Extended Configuration">
                 Here comes the extended configuration!
@@ -143,9 +134,7 @@ export default {
             window.backend.Services.InstallService(this.model)
                 .then(() => {
                     isLoading(false);
-                    this.$buefy.toast.open(
-                        createMsg('Successfully installed service.', 'success')
-                    );
+                    this.$buefy.toast.open(createMsg('Successfully installed service.', 'success'));
                     this.$router.push({ name: OverviewRoute });
                 })
                 .catch((reason) => {
@@ -160,6 +149,11 @@ export default {
 <style lang="scss" >
 @import '../styles';
 .b-tabs {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+
     .tabs {
         ul {
             margin: 0;
@@ -185,8 +179,20 @@ export default {
             }
         }
     }
+    
     .tab-content.tab-content {
         padding: 16px 0;
+        height: 100%;
+        max-height: 100%;
+        overflow-y: auto;
+
+        .tab-item {
+            max-height: 100%;
+
+            & > * {
+                max-width: 100%;
+            }
+        }
     }
 }
 </style>

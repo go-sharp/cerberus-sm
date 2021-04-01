@@ -26,6 +26,7 @@ export default {
 .page__header {
     padding-bottom: 0.5rem;
     border-bottom: 3px outset $background-contrast;
+    flex: 0 0 auto;
 }
 
 .page__menu {
@@ -38,13 +39,15 @@ export default {
     flex-direction: column;
     height: 100%;
     padding: 0.75rem;
+    max-height: 100%;
 }
 
 .content {
-    height: 90%;
+    flex: 1 1 auto;
+    height: 100%;
+    max-height: 100%;
     min-height: 50%;
-    overflow-y: auto;
-    overflow-x: hidden;   
+    overflow: hidden;
 }
 
 .title {
