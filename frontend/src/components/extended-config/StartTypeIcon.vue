@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     currentStartType() {
-      return StartTypes.find(e => e.value === this.startType);      
+      return StartTypes.find(e => e.value === this.startType) || { hint: '', icon: ''};      
     },
   },
 };

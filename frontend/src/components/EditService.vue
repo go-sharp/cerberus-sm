@@ -139,8 +139,18 @@ export default {
         max-height: 100%;
         overflow-y: auto;
 
+        &.is-transitioning {            
+            max-height: 100%;
+            height: 100%;
+
+            .tab-item {
+                height: 0;
+            }
+        }
+
         .tab-item {
             max-height: 100%;
+            height: 100%;
 
             & > * {
                 max-width: 100%;

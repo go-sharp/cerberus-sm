@@ -15,14 +15,14 @@
                 size="is-small"
                 icon-right="pencil"
                 :disabled="disabled"
-                @click="$emit('edit', item)"
+                @click="$emit('edit', exitCode)"
             />
             <b-button
                 type="is-danger"
                 size="is-small"
                 icon-right="delete"
                 :disabled="disabled"
-                @click="$emit('delete', item)"
+                @click="$emit('delete', exitCode)"
             />
         </div>
     </section>

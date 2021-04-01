@@ -10,5 +10,12 @@ export function createEditBaseModel() {
         work_dir: '',
         args: [],
         env: [],
+
+        recovery_actions: [],
+        stop_signal: 0,
+
+        dependencies: [],
+        service_user: '',
+        start_type: 0
     };
 }

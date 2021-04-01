@@ -27,7 +27,7 @@
                 Here comes the extended configuration!
             </b-tab-item>
             <b-tab-item value="recovery" label="Recovery Actions">
-                <recovery-actions></recovery-actions>
+                <recovery-actions :recoveryActions.sync="actionSource"></recovery-actions>
             </b-tab-item>
         </b-tabs>
     </page>
@@ -39,8 +39,18 @@ import { OverviewRoute } from '../routes';
 import EditServiceBase from './EditServiceBase.vue';
 import { createEditBaseModel } from './models/service';
 import RecoveryActions from './recovery-action/RecoveryActions.vue';
+import { NoAction, Restart, RestartRunProgram, RunProgram } from './recovery-action/ActionDropdown.vue';
 
 const isValidServiceName = new RegExp(/^[a-zA-Z0-9_+\-!]+$/);
+
+let actionSource = [
+    { exit_code: 2, action: Restart, delay: 15, max_restarts: 1, reset_after: 0 },
+    { exit_code: 3, action: RestartRunProgram, delay: 15, max_restarts: 1, reset_after: 0 },
+    { exit_code: 5, action: RunProgram, delay: 0, max_restarts: 0, reset_after: 0, program: 'c:\\temp\\myprogram.exe' },
+    { exit_code: 6, action: NoAction, delay: 0, max_restarts: 0, reset_after: 0 },
+    { exit_code: 8, action: Restart, delay: 15, max_restarts: 1, reset_after: 0 },
+    { exit_code: 123, action: Restart, delay: 15, max_restarts: 1, reset_after: 0 },
+];
 
 export default {
     components: { EditServiceBase, RecoveryActions },
@@ -54,6 +64,7 @@ export default {
             },
             displayEdited: false,
             activeTab: 'base',
+            actionSource: [...actionSource]
         };
     },
     watch: {
@@ -179,15 +190,25 @@ export default {
             }
         }
     }
-    
+
     .tab-content.tab-content {
         padding: 16px 0;
         height: 100%;
         max-height: 100%;
         overflow-y: auto;
 
+        &.is-transitioning {            
+            max-height: 100%;
+            height: 100%;
+
+            .tab-item {
+                height: 0;
+            }
+        }
+
         .tab-item {
             max-height: 100%;
+            height: 100%;
 
             & > * {
                 max-width: 100%;

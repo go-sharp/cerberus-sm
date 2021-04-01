@@ -54,16 +54,7 @@
 <script>
 import RecoveryActionEditor from './RecoveryActionEditor.vue';
 import ActionItem from './ActionItem.vue';
-import { NoAction, Restart, RestartRunProgram, RunProgram } from './ActionDropdown.vue';
-
-let actionsSource = [
-    { exit_code: 2, action: Restart, delay: 15, max_restarts: 1, reset_after: 0 },
-    { exit_code: 3, action: RestartRunProgram, delay: 15, max_restarts: 1, reset_after: 0 },
-    { exit_code: 5, action: RunProgram, delay: 0, max_restarts: 0, reset_after: 0, program: 'c:\\temp\\myprogram.exe' },
-    { exit_code: 6, action: NoAction, delay: 0, max_restarts: 0, reset_after: 0 },
-    { exit_code: 8, action: Restart, delay: 15, max_restarts: 1, reset_after: 0 },
-    { exit_code: 123, action: Restart, delay: 15, max_restarts: 1, reset_after: 0 },
-];
+import { NoAction } from './ActionDropdown.vue';
 
 export default {
     components: { RecoveryActionEditor, ActionItem },
@@ -71,13 +62,14 @@ export default {
         recoveryActions: {
             type: Array,
             required: false,
+            default: () => [],
         },
     },
     data() {
         return {
             action: { exit_code: 45, delay: 444 },
             selected: null,
-            dataSource: actionsSource,
+            dataSource: [...this.recoveryActions],
             isNew: false,
             canSave: false,
         };
@@ -104,8 +96,10 @@ export default {
             if (this.isNew) {
                 this.dataSource.push(this.selected);
             } else {
-                const idx = this.dataSource.findIndex((a) => a.exit_code === this.selected.exit_code);
-                this.dataSource[idx] = this.selected;
+                this.dataSource = [
+                    ...this.dataSource.filter((a) => a.exit_code !== this.selected.exit_code),
+                    this.selected,
+                ];
             }
 
             this.selected = null;
@@ -122,7 +116,7 @@ export default {
         },
         editItem: function (item) {
             this.isNew = false;
-            this.selected = item;
+            this.selected = { ...item };
         },
         addAction: function () {
             this.isNew = true;
@@ -147,6 +141,7 @@ export default {
     display: flex;
     flex-flow: column nowrap;
     max-height: 100%;
+    height: 100%;
 
     .recovery-actions__menu {
         padding-left: 5px;
