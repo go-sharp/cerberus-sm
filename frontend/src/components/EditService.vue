@@ -99,7 +99,7 @@ export default {
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss" scoped >
 @import '../styles';
 .b-tabs {
     height: 100%;

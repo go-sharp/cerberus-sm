@@ -24,7 +24,8 @@
                 <edit-service-base v-model="model" :is-new="true" :field-messages="validations" />
             </b-tab-item>
             <b-tab-item value="extended" label="Extended Configuration">
-                Here comes the extended configuration!
+                <start-type-dropdown :value="0"></start-type-dropdown>
+                <stop-signal v-model="stopSignal"></stop-signal>
             </b-tab-item>
             <b-tab-item value="recovery" label="Recovery Actions">
                 <recovery-actions :recoveryActions.sync="actionSource"></recovery-actions>
@@ -40,6 +41,8 @@ import EditServiceBase from './EditServiceBase.vue';
 import { createEditBaseModel } from './models/service';
 import RecoveryActions from './recovery-action/RecoveryActions.vue';
 import { NoAction, Restart, RestartRunProgram, RunProgram } from './recovery-action/ActionDropdown.vue';
+import StartTypeDropdown from './extended-config/StartTypeDropdown.vue';
+import StopSignal from './extended-config/StopSignal.vue';
 
 const isValidServiceName = new RegExp(/^[a-zA-Z0-9_+\-!]+$/);
 
@@ -53,7 +56,7 @@ let actionSource = [
 ];
 
 export default {
-    components: { EditServiceBase, RecoveryActions },
+    components: { EditServiceBase, RecoveryActions, StartTypeDropdown, StopSignal },
     data() {
         return {
             OverviewRoute,
@@ -64,7 +67,8 @@ export default {
             },
             displayEdited: false,
             activeTab: 'base',
-            actionSource: [...actionSource]
+            actionSource: [...actionSource],
+            stopSignal: 0
         };
     },
     watch: {
@@ -192,12 +196,12 @@ export default {
     }
 
     .tab-content.tab-content {
-        padding: 16px 0;
+        padding: 1rem;
         height: 100%;
         max-height: 100%;
-        overflow-y: auto;
+        overflow: hidden;
 
-        &.is-transitioning {            
+        &.is-transitioning {
             max-height: 100%;
             height: 100%;
 

@@ -25,10 +25,7 @@ export default {
     },
     // Lifecylce hooks
     created: function () {
-        window.wails.Events.On(
-            LOADING_EVENT,
-            (isLoading) => (this.isLoading = !!isLoading)
-        );
+        window.wails.Events.On(LOADING_EVENT, (isLoading) => (this.isLoading = !!isLoading));
     },
 };
 </script>
@@ -89,7 +86,6 @@ export default {
     background-color: $background-color;
     border-collapse: separate;
     box-shadow: 0 0.5em 1.5em -0.125em #a2a2a2, 0 0px 0 1px #a2a2a2;
-    
 
     .dropdown-item {
         color: $background-contrast;
@@ -126,5 +122,13 @@ export default {
             }
         }
     }
+}
+
+.control-label:hover {
+    color: $foreground-color;
+}
+
+.checkbox:hover {
+    color: $foreground-color;
 }
 </style>
