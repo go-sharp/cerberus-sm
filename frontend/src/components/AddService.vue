@@ -24,8 +24,11 @@
                 <edit-service-base v-model="model" :is-new="true" :field-messages="validations" />
             </b-tab-item>
             <b-tab-item value="extended" label="Extended Configuration">
-                <start-type-dropdown :value="0"></start-type-dropdown>
+                <b-field label="Start Type">
+                    <start-type-dropdown :value="0"></start-type-dropdown>
+                </b-field>
                 <stop-signal v-model="stopSignal"></stop-signal>
+                <dependencies-list v-model="dependencies"></dependencies-list>
             </b-tab-item>
             <b-tab-item value="recovery" label="Recovery Actions">
                 <recovery-actions :recoveryActions.sync="actionSource"></recovery-actions>
@@ -43,6 +46,7 @@ import RecoveryActions from './recovery-action/RecoveryActions.vue';
 import { NoAction, Restart, RestartRunProgram, RunProgram } from './recovery-action/ActionDropdown.vue';
 import StartTypeDropdown from './extended-config/StartTypeDropdown.vue';
 import StopSignal from './extended-config/StopSignal.vue';
+import DependenciesList from './extended-config/DependenciesList.vue';
 
 const isValidServiceName = new RegExp(/^[a-zA-Z0-9_+\-!]+$/);
 
@@ -56,7 +60,7 @@ let actionSource = [
 ];
 
 export default {
-    components: { EditServiceBase, RecoveryActions, StartTypeDropdown, StopSignal },
+    components: { EditServiceBase, RecoveryActions, StartTypeDropdown, StopSignal, DependenciesList },
     data() {
         return {
             OverviewRoute,
@@ -68,7 +72,8 @@ export default {
             displayEdited: false,
             activeTab: 'base',
             actionSource: [...actionSource],
-            stopSignal: 0
+            stopSignal: 0,
+            dependencies: []
         };
     },
     watch: {

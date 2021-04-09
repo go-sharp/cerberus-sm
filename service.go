@@ -85,6 +85,51 @@ func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error
 	return svcs, nil
 }
 
+func (s *Services) GetDependOnSvc() (svcs []DependOnSvcItem, err error) {
+	s.log.Debug("loading depend on services")
+
+	return []DependOnSvcItem{
+		{
+			Name:        "TestService1",
+			DisplayName: "Test Service 1",
+		},
+		{
+			Name:        "TestService2",
+			DisplayName: "Test Service 2",
+		},
+		{
+			Name:        "TestService3",
+			DisplayName: "Test Service 3",
+		},
+	}, nil
+
+	services, err := s.mgr.ListServices()
+	if err != nil {
+		return svcs, err
+	}
+
+	for _, sname := range services {
+		sv, err := s.mgr.OpenService(sname)
+		if err != nil {
+			s.log.Errorf("skipping service '%v': %v", sname, err)
+			continue
+		}
+
+		cfg, err := sv.Config()
+		if err != nil {
+			s.log.Errorf("skipping service '%v': %v", sname, err)
+			continue
+		}
+
+		svcs = append(svcs, DependOnSvcItem{
+			Name:        sname,
+			DisplayName: cfg.DisplayName,
+		})
+	}
+
+	return svcs, nil
+}
+
 // LoadService gets the current configuration for a service.
 func (s *Services) LoadService(name string) (svc ServiceItem, err error) {
 	cfg, err := cerberus.LoadServiceCfg(name)

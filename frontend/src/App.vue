@@ -70,6 +70,14 @@ export default {
     border-color: $background-contrast;
 }
 
+.autocomplete .dropdown-item.is-hovered {
+    background-color: $primary;
+    color: $white;
+    &:hover {
+        color: $black;
+    }
+}
+
 .control.has-icons-left .input:focus ~ .icon,
 .control.has-icons-left .select:focus ~ .icon,
 .control.has-icons-right .input:focus ~ .icon,

@@ -44,6 +44,12 @@ type ServiceRecoveryActionItem struct {
 	Arguments   []string `json:"arguments,omitempty"`
 }
 
+// DependOnSvcItem item for the DependenciesList component.
+type DependOnSvcItem struct {
+	Name        string `json:"name,omitempty"`
+	DisplayName string `json:"display_name,omitempty"`
+}
+
 func mapSvcCfgToSvcItem(svcCfg *cerberus.SvcConfig) (svc ServiceItem) {
 	return ServiceItem{
 		Name:        svcCfg.Name,
