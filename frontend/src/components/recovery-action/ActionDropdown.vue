@@ -53,7 +53,7 @@ export const actions = [
         icon: 'apps',
     },
     {
-        text: 'Restart & Run Program',
+        text: 'Restart & Run',
         value: 6,
         hint: 'Service will restart and run a program if an error occurs.',
         icon: 'repeat',

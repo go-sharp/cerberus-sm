@@ -42,29 +42,29 @@ func (s *Services) WailsInit(runtime *wails.Runtime) error {
 // LoadOverviewServices loads the service data for the overview page.
 func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error) {
 
-	return []OverviewServiceItem{
-		{
-			Name:        "Test1",
-			DisplayName: "Super Test 1",
-			Description: "What a test",
-			State:       0,
-			StartType:   0,
-		},
-		{
-			Name:        "Test2",
-			DisplayName: "Super Test 2",
-			Description: "What a test",
-			State:       1,
-			StartType:   2,
-		},
-		{
-			Name:        "Test3",
-			DisplayName: "Super Test 3",
-			Description: "What a test",
-			State:       2,
-			StartType:   3,
-		},
-	}, nil
+	// return []OverviewServiceItem{
+	// 	{
+	// 		Name:        "Test1",
+	// 		DisplayName: "Super Test 1",
+	// 		Description: "What a test",
+	// 		State:       0,
+	// 		StartType:   0,
+	// 	},
+	// 	{
+	// 		Name:        "Test2",
+	// 		DisplayName: "Super Test 2",
+	// 		Description: "What a test",
+	// 		State:       1,
+	// 		StartType:   2,
+	// 	},
+	// 	{
+	// 		Name:        "Test3",
+	// 		DisplayName: "Super Test 3",
+	// 		Description: "What a test",
+	// 		State:       2,
+	// 		StartType:   3,
+	// 	},
+	// }, nil
 
 	services, err := s.getServices()
 	if err != nil {
@@ -88,20 +88,20 @@ func (s *Services) LoadOverviewServices() (svcs []OverviewServiceItem, err error
 func (s *Services) GetDependOnSvc() (svcs []DependOnSvcItem, err error) {
 	s.log.Debug("loading depend on services")
 
-	return []DependOnSvcItem{
-		{
-			Name:        "TestService1",
-			DisplayName: "Test Service 1",
-		},
-		{
-			Name:        "TestService2",
-			DisplayName: "Test Service 2",
-		},
-		{
-			Name:        "TestService3",
-			DisplayName: "Test Service 3",
-		},
-	}, nil
+	// return []DependOnSvcItem{
+	// 	{
+	// 		Name:        "TestService1",
+	// 		DisplayName: "Test Service 1",
+	// 	},
+	// 	{
+	// 		Name:        "TestService2",
+	// 		DisplayName: "Test Service 2",
+	// 	},
+	// 	{
+	// 		Name:        "TestService3",
+	// 		DisplayName: "Test Service 3",
+	// 	},
+	// }, nil
 
 	services, err := s.mgr.ListServices()
 	if err != nil {
@@ -145,7 +145,18 @@ func (s *Services) InstallService(data map[string]interface{}) (err error) {
 	defer s.handlePanic(&err)
 
 	svc := mapServiceItemToSvcConfig(data)
-	return cerberus.InstallService(svc)
+
+	if err := cerberus.InstallService(svc); err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v", svc)
+	if err := cerberus.UpdateService(svc); err != nil {
+		_ = cerberus.RemoveService(svc.Name)
+		return err
+	}
+
+	return nil
 }
 
 // ShowFileDialog displays a file dialog to request a file path.

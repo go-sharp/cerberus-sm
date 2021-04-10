@@ -1,19 +1,15 @@
 <template>
-    <div class="stop-signal">
-        <b-field label="Stop Signals">
-            <b-field class="stop-signal__item" message="Sends a Ctrl-C to the process">
-                <b-checkbox @input="checkboxChanged($event, signals.CtrlC)" :value="ctrlChecked"> Ctrl-C </b-checkbox>
-            </b-field>
-            <b-field class="stop-signal__item" message="Sends a WM_CLOSE message to the process">
-                <b-checkbox @input="checkboxChanged($event, signals.Close)" :value="closeChecked">
-                    WM_CLOSE
-                </b-checkbox>
-            </b-field>
-            <b-field class="stop-signal__item" message="Sends a WM_QUIT message to the process">
-                <b-checkbox @input="checkboxChanged($event, signals.Quit)" :value="quitChecked"> WM_QUIT </b-checkbox>
-            </b-field>
+    <b-field label="Stop Signals" class="stop-signal">
+        <b-field class="stop-signal__item" message="Sends a Ctrl-C to the process">
+            <b-checkbox @input="checkboxChanged($event, signals.CtrlC)" :value="ctrlChecked"> Ctrl-C </b-checkbox>
         </b-field>
-    </div>
+        <b-field class="stop-signal__item" message="Sends a WM_CLOSE message to the process">
+            <b-checkbox @input="checkboxChanged($event, signals.Close)" :value="closeChecked"> WM_CLOSE </b-checkbox>
+        </b-field>
+        <b-field class="stop-signal__item" message="Sends a WM_QUIT message to the process">
+            <b-checkbox @input="checkboxChanged($event, signals.Quit)" :value="quitChecked"> WM_QUIT </b-checkbox>
+        </b-field>
+    </b-field>
 </template>
 
 <script>

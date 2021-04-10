@@ -1,6 +1,11 @@
 package main
 
-import "github.com/go-sharp/cerberus/v2"
+import (
+	"time"
+
+	"github.com/go-sharp/cerberus/v2"
+	"github.com/pkg/errors"
+)
 
 // OverviewServiceItem represents a service for the overview page.
 type OverviewServiceItem struct {
@@ -50,6 +55,7 @@ type DependOnSvcItem struct {
 	DisplayName string `json:"display_name,omitempty"`
 }
 
+// mapSvcCfgToSvcItem maps a cerberus SvcConfig to a ServiceItem.
 func mapSvcCfgToSvcItem(svcCfg *cerberus.SvcConfig) (svc ServiceItem) {
 	return ServiceItem{
 		Name:        svcCfg.Name,
@@ -68,6 +74,7 @@ func mapSvcCfgToSvcItem(svcCfg *cerberus.SvcConfig) (svc ServiceItem) {
 	}
 }
 
+// mapSvcCfgRecoveryActionToViewItem maps a cerberus.RecoveryAction to a view recovery action item.
 func mapSvcCfgRecoveryActionToViewItem(actions map[int]cerberus.SvcRecoveryAction) map[int]ServiceRecoveryActionItem {
 	uiActions := map[int]ServiceRecoveryActionItem{}
 	for k, v := range actions {
@@ -84,10 +91,15 @@ func mapSvcCfgRecoveryActionToViewItem(actions map[int]cerberus.SvcRecoveryActio
 	return uiActions
 }
 
+// mapServiceItemToSvcConfig maps a ServiceItem back to a cerberus.SvcConfig.
 func mapServiceItemToSvcConfig(service map[string]interface{}) cerberus.SvcConfig {
+	// Map Basic Configuration
 	svc := cerberus.SvcConfig{
-		Name:    service["name"].(string),
-		ExePath: service["exe_path"].(string),
+		Name:            service["name"].(string),
+		ExePath:         service["exe_path"].(string),
+		StartType:       cerberus.ManualStartType,
+		StopSignal:      cerberus.NoSignal,
+		RecoveryActions: map[int]cerberus.SvcRecoveryAction{},
 	}
 
 	if v, ok := service["display_name"].(string); ok {
@@ -110,7 +122,81 @@ func mapServiceItemToSvcConfig(service map[string]interface{}) cerberus.SvcConfi
 		svc.Env = mapInfToStrA(v)
 	}
 
+	// Map Extendend configuration
+	if v, ok := service["start_type"].(float64); ok {
+		svc.StartType = cerberus.StartType(v)
+	}
+
+	if v, ok := service["stop_signal"].(float64); ok {
+		svc.StopSignal = cerberus.StopSignal(v)
+	}
+
+	if v, ok := service["recovery_actions"].([]interface{}); ok {
+		for _, item := range v {
+			if i, ok := item.(map[string]interface{}); ok {
+				action, err := mapRecoverViewItemToSvcCfgRecAction(i)
+				if err != nil {
+					continue
+				}
+				svc.RecoveryActions[action.ExitCode] = *action
+			}
+		}
+	}
+
+	if v, ok := service["dependencies"]; ok {
+		svc.Dependencies = mapInfToStrA(v)
+	}
+
+	if v, ok := service["service_user"].(string); ok {
+		svc.ServiceUser = v
+	}
+
+	if v, ok := service["password"].(string); ok && v != "" {
+		svc.Password = &v
+	}
+
 	return svc
+}
+
+func mapRecoverViewItemToSvcCfgRecAction(action map[string]interface{}) (*cerberus.SvcRecoveryAction, error) {
+	svcAction := cerberus.SvcRecoveryAction{}
+
+	if v, ok := action["exit_code"].(float64); ok {
+		svcAction.ExitCode = int(v)
+	}
+
+	if v, ok := action["action"].(float64); ok {
+		svcAction.Action = cerberus.RecoveryAction(v)
+	}
+
+	switch svcAction.Action {
+	case cerberus.NoAction:
+	case cerberus.RestartAction, cerberus.RunProgramAction, cerberus.RunAndRestartAction:
+	default:
+		return nil, errors.New("invalid action typ")
+	}
+
+	if v, ok := action["delay"].(float64); ok {
+		svcAction.Delay = int(v)
+	}
+
+	if v, ok := action["max_restarts"].(float64); ok {
+		svcAction.MaxRestarts = int(v)
+	}
+
+	if v, ok := action["reset_after"].(float64); ok {
+		svcAction.ResetAfter = time.Duration(time.Second * time.Duration(v))
+	}
+
+	if v, ok := action["program"].(string); ok {
+		svcAction.Program = v
+	}
+
+	if v, ok := action["arguments"]; ok {
+		svcAction.Arguments = mapInfToStrA(v)
+	}
+
+	return &svcAction, nil
 }
 
 func mapInfToStrA(data interface{}) []string {

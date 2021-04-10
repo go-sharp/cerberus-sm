@@ -15,7 +15,8 @@ export function createEditBaseModel() {
         stop_signal: 0,
 
         dependencies: [],
-        service_user: '',
-        start_type: 0
+        service_user: 'LocalSystem',
+        password: '',
+        start_type: 3   
     };
 }

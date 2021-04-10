@@ -116,7 +116,8 @@ export default {
         };
     },
     mounted: function () {
-        this.validateModel();
+        this.isValid = this.validateModel();
+        this.$emit(ValidationChanged, this.isValid);
     },
     computed: {
         showProgram: function () {
@@ -132,8 +133,8 @@ export default {
         validExitCode: function () {
             if (!Array.isArray(this.excludedExitCodes) || !this.isNew) return true;
 
-            if (typeof this.model.exit_code !== 'number') return false;
-            return !this.excludedExitCodes.find((e) => e === this.model.exit_code);
+            if (typeof this.model.exit_code !== 'number') return false;            
+            return this.excludedExitCodes.find((e) => e === this.model.exit_code) === undefined;
         },
         validExitCodeMsg: function () {
             if (this.validExitCode) return '';

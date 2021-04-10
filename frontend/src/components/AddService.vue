@@ -19,19 +19,24 @@
             </div>
         </template>
         <!-- Page content -->
-        <b-tabs v-model="activeTab">
+        <b-tabs v-model="activeTab" :animated="false">
             <b-tab-item value="base" label="Base Configuration">
                 <edit-service-base v-model="model" :is-new="true" :field-messages="validations" />
             </b-tab-item>
-            <b-tab-item value="extended" label="Extended Configuration">
-                <b-field label="Start Type">
-                    <start-type-dropdown :value="0"></start-type-dropdown>
-                </b-field>
-                <stop-signal v-model="stopSignal"></stop-signal>
-                <dependencies-list v-model="dependencies"></dependencies-list>
+            <b-tab-item value="extended" label="Extended Configuration" class="extended-configuration">
+                <div class="extended-configuration__item">
+                    <b-field label="Start Type">
+                        <start-type-dropdown :value="model.start_type"></start-type-dropdown>
+                    </b-field>
+                    <stop-signal v-model="model.stop_signal"></stop-signal>
+                    <dependencies-list v-model="model.dependencies"></dependencies-list>
+                </div>
+                <div class="extended-configuration__item">
+                    <service-user :password.sync="model.password" :userName="model.service_user"></service-user>
+                </div>
             </b-tab-item>
             <b-tab-item value="recovery" label="Recovery Actions">
-                <recovery-actions :recoveryActions.sync="actionSource"></recovery-actions>
+                <recovery-actions :recoveryActions.sync="model.recovery_actions"></recovery-actions>
             </b-tab-item>
         </b-tabs>
     </page>
@@ -47,6 +52,7 @@ import { NoAction, Restart, RestartRunProgram, RunProgram } from './recovery-act
 import StartTypeDropdown from './extended-config/StartTypeDropdown.vue';
 import StopSignal from './extended-config/StopSignal.vue';
 import DependenciesList from './extended-config/DependenciesList.vue';
+import ServiceUser from './extended-config/ServiceUser.vue';
 
 const isValidServiceName = new RegExp(/^[a-zA-Z0-9_+\-!]+$/);
 
@@ -60,7 +66,7 @@ let actionSource = [
 ];
 
 export default {
-    components: { EditServiceBase, RecoveryActions, StartTypeDropdown, StopSignal, DependenciesList },
+    components: { EditServiceBase, RecoveryActions, StartTypeDropdown, StopSignal, DependenciesList, ServiceUser },
     data() {
         return {
             OverviewRoute,
@@ -73,7 +79,7 @@ export default {
             activeTab: 'base',
             actionSource: [...actionSource],
             stopSignal: 0,
-            dependencies: []
+            dependencies: [],
         };
     },
     watch: {
@@ -151,6 +157,7 @@ export default {
     methods: {
         installService: function () {
             isLoading(true);
+            console.log(this.model);
             window.backend.Services.InstallService(this.model)
                 .then(() => {
                     isLoading(false);
@@ -168,6 +175,21 @@ export default {
 
 <style lang="scss" >
 @import '../styles';
+.extended-configuration {
+    display: flex;
+    flex-flow: row wrap;
+    height: 100%;
+    overflow-y: auto;
+
+    .extended-configuration__item {
+        &:not(:last-child) {
+            margin-right: 2rem;
+        }
+        flex: 1 1 300px;
+        min-width: 300px;
+    }
+}
+
 .b-tabs {
     height: 100%;
     max-height: 100%;
@@ -211,13 +233,14 @@ export default {
             height: 100%;
 
             .tab-item {
-                height: 0;
+                height:200%;                
             }
         }
 
         .tab-item {
             max-height: 100%;
             height: 100%;
+            overflow-y: auto;
 
             & > * {
                 max-width: 100%;

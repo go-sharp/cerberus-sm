@@ -78,6 +78,20 @@ export default {
     }
 }
 
+[disabled].input,
+[disabled].textarea,
+.taginput [disabled].taginput-container.is-focusable,
+.select select[disabled],
+fieldset[disabled] .input,
+fieldset[disabled] .textarea,
+fieldset[disabled] .taginput .taginput-container.is-focusable,
+.taginput fieldset[disabled] .taginput-container.is-focusable,
+fieldset[disabled] .select select,
+.select fieldset[disabled] select {
+    background-color: $input-background-color;
+    border-color: $background-contrast;
+}
+
 .control.has-icons-left .input:focus ~ .icon,
 .control.has-icons-left .select:focus ~ .icon,
 .control.has-icons-right .input:focus ~ .icon,
