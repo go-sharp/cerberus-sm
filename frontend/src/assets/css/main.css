@@ -5,7 +5,6 @@
   text-align: left;
   color: #eee;
   height: 100%;
-  padding: 25px;
   display: flex;
   flex-direction: column;
 }
@@ -14,16 +13,12 @@
   box-sizing: border-box;
 }
 
-html {
-  height: 100%;
-  background-color: #131313;
-  background-image: url("../images/background.jpg");
-  background-size: auto;
-}
-
-body {
+body, html {
   margin: 0;
+  background-color: #363636;  
+  background-size: auto;
   height: 100%;
+  overflow: auto !important;
 }
 
 .logo {

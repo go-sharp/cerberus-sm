@@ -83,6 +83,7 @@
                     ellipsis
                     allow-duplicates
                     placeholder="Add"
+                    type="is-primary"
                 >
                 </b-taginput>
             </b-field>
@@ -98,6 +99,7 @@
                     icon="currency-usd"
                     allow-duplicates
                     placeholder="Add"
+                    type="is-primary"
                 >
                 </b-taginput>
             </b-field>
