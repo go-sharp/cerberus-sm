@@ -28,8 +28,8 @@ type ServiceItem struct {
 	Env         []string `json:"env,omitempty"`
 
 	// Extended configurations
-	RecoveryActions map[int]ServiceRecoveryActionItem `json:"recovery_actions,omitempty"`
-	StopSignal      int                               `json:"stop_signal,omitempty"`
+	RecoveryActions []ServiceRecoveryActionItem `json:"recovery_actions,omitempty"`
+	StopSignal      int                         `json:"stop_signal,omitempty"`
 
 	// SCM Properties (Admin rights require to load this properties)
 	Dependencies []string `json:"dependencies,omitempty"`
@@ -40,13 +40,13 @@ type ServiceItem struct {
 
 // ServiceRecoveryActionItem is the frontend view for the recovery actions.
 type ServiceRecoveryActionItem struct {
-	ExitCode    int      `json:"exit_code,omitempty"`
-	Action      int      `json:"action,omitempty"`
-	Delay       int      `json:"delay,omitempty"`
-	MaxRestarts int      `json:"max_restarts,omitempty"`
-	ResetAfter  int      `json:"reset_after,omitempty"`
-	Program     string   `json:"program,omitempty"`
-	Arguments   []string `json:"arguments,omitempty"`
+	ExitCode    int      `json:"exit_code"`
+	Action      int      `json:"action"`
+	Delay       int      `json:"delay"`
+	MaxRestarts int      `json:"max_restarts"`
+	ResetAfter  int      `json:"reset_after"`
+	Program     string   `json:"program"`
+	Arguments   []string `json:"arguments"`
 }
 
 // DependOnSvcItem item for the DependenciesList component.
@@ -75,10 +75,10 @@ func mapSvcCfgToSvcItem(svcCfg *cerberus.SvcConfig) (svc ServiceItem) {
 }
 
 // mapSvcCfgRecoveryActionToViewItem maps a cerberus.RecoveryAction to a view recovery action item.
-func mapSvcCfgRecoveryActionToViewItem(actions map[int]cerberus.SvcRecoveryAction) map[int]ServiceRecoveryActionItem {
-	uiActions := map[int]ServiceRecoveryActionItem{}
-	for k, v := range actions {
-		uiActions[k] = ServiceRecoveryActionItem{
+func mapSvcCfgRecoveryActionToViewItem(actions map[int]cerberus.SvcRecoveryAction) []ServiceRecoveryActionItem {
+	uiActions := []ServiceRecoveryActionItem{}
+	for _, v := range actions {
+		uiActions = append(uiActions, ServiceRecoveryActionItem{
 			ExitCode:    v.ExitCode,
 			Action:      int(v.Action),
 			Delay:       v.Delay,
@@ -86,8 +86,9 @@ func mapSvcCfgRecoveryActionToViewItem(actions map[int]cerberus.SvcRecoveryActio
 			ResetAfter:  int(v.ResetAfter.Seconds()),
 			Program:     v.Program,
 			Arguments:   v.Arguments,
-		}
+		})
 	}
+
 	return uiActions
 }
 

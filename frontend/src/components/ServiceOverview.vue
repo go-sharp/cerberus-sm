@@ -199,7 +199,7 @@ export default {
             );
         },
         editService: function (svc) {
-            this.$router.push({ name: EditRoute, params: { svc: svc } });
+            this.$router.push({ name: EditRoute, params: { serviceName: svc } });
         },
         deleteService: function (svc) {
             this.runBackgroundTask(svc, 'DeleteService', 'deleted', 'delete');

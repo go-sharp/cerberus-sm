@@ -24,6 +24,7 @@ import { createMsg } from '../../util';
 export default {
     props: {
         value: Array,
+        exclude: [String, Array],
     },
     data: function () {
         return {
@@ -57,7 +58,15 @@ export default {
     mounted: function () {
         window.backend.Services.GetDependOnSvc()
             .then((svcs) => {
-                this.availableSvcs = svcs;
+                if (this.exclude) {
+                    this.availableSvcs = svcs.filter((e) => {
+                        if(typeof this.exclude === 'string' && e.name === this.exclude) return false;
+                        if(Array.isArray(this.exclude) && this.exclude.indexOf(e.name) >= 0) return false;
+
+                        return true;
+                    });
+                } else this.availableSvcs = svcs;
+
                 if (this.value) {
                     for (const svc of this.value) {
                         const s = this.availableSvcs.find((e) => e.name === svc);
