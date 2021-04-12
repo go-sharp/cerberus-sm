@@ -183,7 +183,7 @@ export default {
                     this.$buefy.toast.open(createMsg(reason, 'error'));
                 });
         },
-        updateService: function () {        
+        updateService: function () {
             /* Todo: Implement Backend UpdateService method */
             isLoading(true);
             window.backend.Services.UpdateService(this.model)
@@ -228,6 +228,10 @@ export default {
         }
         flex: 1 1 300px;
         min-width: 300px;
+    }
+
+    .dropdown-content {
+        margin-left: 0.5rem;
     }
 }
 
