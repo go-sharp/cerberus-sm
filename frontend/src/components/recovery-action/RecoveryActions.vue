@@ -182,12 +182,12 @@ export default {
     }
 
     .recovery-actions__items {
-        padding: 10px;
+        padding: 0;
+        margin-left: -10px;        
     }
 
     .recovery-actions__item {
-        // box-shadow: 0 0.5em 1.5em -0.125em #a2a2a2, 0 0px 0 1px #a2a2a2;
-        box-shadow: 0 0 0.2em 1px $background-contrast, 0 0px 0 1px $background-contrast;
+        box-shadow: 0 0 0.2em 1px $background-contrast, 0 0 0 1px $background-contrast;
         padding: 5px;
         margin-left: 5px;
 

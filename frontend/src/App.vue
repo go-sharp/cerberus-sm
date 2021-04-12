@@ -126,7 +126,7 @@ fieldset[disabled] .select select,
 .dropdown-content {
     background-color: $background-color;
     border-collapse: separate;
-    box-shadow: 0 0.5em 1.5em -0.125em #a2a2a2, 0 0px 0 1px #a2a2a2;
+    box-shadow: 0 0.2em 1.5em -0.125em #a2a2a2, 0 0px 0 1px #a2a2a2;
 
     .dropdown-item {
         color: $background-contrast;
