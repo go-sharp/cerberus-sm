@@ -165,14 +165,9 @@ export default {
 
             return this.validExitCode;
         },
-        showDialog: function (isWorkDir) {
-            window.backend.Services.ShowFileDialog({
-                dir: !!isWorkDir,
-            })
-                .then((val) => {
-                    const prop = isWorkDir ? 'work_dir' : 'exe_path';
-                    this.model[prop] = val;
-                })
+        showDialog: function () {
+            window.backend.Services.ShowFileDialog({dir: false})
+                .then((val) => this.model.program = val)
                 .catch((reason) => this.$buefy.toast.open(createMsg(reason, 'error')));
         },
     },

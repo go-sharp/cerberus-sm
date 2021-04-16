@@ -135,8 +135,8 @@ export default {
         refreshServices: function () {
             this.isLoading(true)
             window.backend.Services.LoadOverviewServices()
-                .then((svc) => {
-                    this.services = svc;
+                .then((svc) => {                    
+                    this.services = svc || [];
                 })
                 .catch((reason) => this.$buefy.toast.open(createMsg(reason, 'error')))
                 .finally(() => this.isLoading(false));

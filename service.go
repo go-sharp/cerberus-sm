@@ -34,11 +34,11 @@ func (s *Services) WailsInit(runtime *wails.Runtime) error {
 
 		return nil
 	}
+
 	s.mgr, s.isAdmin = m, true
 	s.log.Debug("successfully connected to the local service manager")
 	return nil
 }
-
 func (s *Services) IsAdmin() bool {
 	return s.isAdmin
 }
@@ -81,6 +81,8 @@ func (s *Services) GetDependOnSvc() (svcs []DependOnSvcItem, err error) {
 		}
 
 		cfg, err := sv.Config()
+		sv.Close()
+
 		if err != nil {
 			s.log.Errorf("skipping service '%v': %v", sname, err)
 			continue
@@ -172,6 +174,7 @@ func (s *Services) StopService(name string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer service.Close()
 
 	status, err := service.Query()
 	if err != nil {
@@ -214,6 +217,7 @@ func (s *Services) StartService(name string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer service.Close()
 
 	status, err := service.Query()
 	if err != nil {
@@ -266,15 +270,19 @@ func (s *Services) getServices() (svcs []serviceInfo, err error) {
 		}
 
 		s.log.Debugf("loading service mgr config for %v\n", service.Name)
-		cfg, err := sv.Config()
-		if err != nil {
-			return svcs, err
-		}
+		cfg, errCfg := sv.Config()
 
 		s.log.Debugf("query service state for %v\n", service.Name)
-		status, err := sv.Query()
-		if err != nil {
-			return svcs, err
+		status, errQuery := sv.Query()
+
+		sv.Close()
+
+		if errCfg != nil {
+			return svcs, errCfg
+		}
+
+		if errQuery != nil {
+			return svcs, errQuery
 		}
 
 		svcs = append(svcs, serviceInfo{
